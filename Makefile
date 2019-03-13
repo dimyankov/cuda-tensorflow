@@ -4,7 +4,7 @@ build:
 	docker build -t cuda-10-tensorflow-1.10:$(DOCKER_TAG) .
         
 extract-libraries:
-	mkdir -p shared \
-	&& docker run --rm -v `pwd`/shared:/shared cuda-10-tensorflow-1.10:$(DOCKER_TAG) \
+	mkdir -p shared-$(DOCKER_TAG) \
+	&& docker run --rm -v `pwd`/shared-$(DOCKER_TAG):/shared cuda-10-tensorflow-1.10:$(DOCKER_TAG) \
 			bash -c 'cp /work/tensorflow-1.10.0/bazel-bin/tensorflow/libtensorflow_cc.so /shared && \
 					 cp /work/tensorflow-1.10.0/bazel-bin/tensorflow/libtensorflow_framework.so /shared'
