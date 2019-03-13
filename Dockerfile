@@ -1,10 +1,9 @@
-ARG TENSORFLOW_VERSION=1.10.0                                                                                                                                                                 
-ARG CUDA_VERSION=10.0                                                                                                                                                                         
-ARG UBUNTU_VERSION=18.04                                                                                                                                                                      
-                                                                                                                                                                                              
-FROM nvidia/cuda:$CUDA_VERSION-cudnn7-devel-ubuntu$UBUNTU_VERSION                                                                                                                             
-ARG TENSORFLOW_VERSION=1.10.0                                                                                                                                                                 
-                                                                                                                                                                                              
+ARG CUDA_VERSION=10.0
+ARG UBUNTU_VERSION=18.04
+
+FROM nvidia/cuda:$CUDA_VERSION-cudnn7-devel-ubuntu$UBUNTU_VERSION
+ARG TENSORFLOW_VERSION=1.10.0
+
 
 RUN \   
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
