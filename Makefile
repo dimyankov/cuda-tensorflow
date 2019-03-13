@@ -1,10 +1,14 @@
 DOCKER_TAG=cuda-caps-`grep TF_CUDA_COMPUTE_CAPABILITIES .tf_configure.bazelrc | cut -d '=' -f 2 | tr -d '"'`
+CUDA_VERSION=`grep ARG Dockerfile | grep CUDA_VERSION | cut -d '=' -f 2`
+TENSORFLOW_VERSION=`grep ARG Dockerfile | grep TENSORFLOW_VERSION | cut -d '=' -f 2`
+IMAGE_NAME="cuda-$(CUDA_VERSION)-tensorflow-$(TENSORFLOW_VERSION)"
+
 
 build:
-	docker build -t cuda-10-tensorflow-1.10:$(DOCKER_TAG) .
+	docker build -t $(IMAGE_NAME):$(DOCKER_TAG) .
         
 extract-libraries:
 	mkdir -p shared-$(DOCKER_TAG) \
-	&& docker run --rm -v `pwd`/shared-$(DOCKER_TAG):/shared cuda-10-tensorflow-1.10:$(DOCKER_TAG) \
-			bash -c 'cp /work/tensorflow/bazel-bin/tensorflow/libtensorflow_cc.so /shared && \
-				 cp /work/tensorflow/bazel-bin/tensorflow/libtensorflow_framework.so /shared'
+	&& docker run --rm -v `pwd`/shared-$(DOCKER_TAG):/shared cuda-$(CUDA_VERSION)-tensorflow-$(TENSORFLOW_VERSION):$(DOCKER_TAG) \
+					bash -c 'cp /work/tensorflow-1.10.0/bazel-bin/tensorflow/libtensorflow_cc.so /shared && \
+							 cp /work/tensorflow-1.10.0/bazel-bin/tensorflow/libtensorflow_framework.so /shared'
