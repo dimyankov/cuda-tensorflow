@@ -1,4 +1,10 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04 as base
+ARG TENSORFLOW_VERSION=1.10.0                                                                                                                                                                 
+ARG CUDA_VERSION=10.0                                                                                                                                                                         
+ARG UBUNTU_VERSION=18.04                                                                                                                                                                      
+                                                                                                                                                                                              
+FROM nvidia/cuda:$CUDA_VERSION-cudnn7-devel-ubuntu$UBUNTU_VERSION                                                                                                                             
+ARG TENSORFLOW_VERSION=1.10.0                                                                                                                                                                 
+                                                                                                                                                                                              
 
 RUN \   
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -27,12 +33,13 @@ RUN wget https://github.com/bazelbuild/bazel/releases/download/0.18.0/bazel_0.18
         && dpkg -i bazel_0.18.0-linux-x86_64.deb \
         && rm bazel_0.18.0-linux-x86_64.deb
 
-RUN wget https://github.com/tensorflow/tensorflow/archive/v1.10.0.tar.gz -O tensorflow_1.10.0.tar.gz \
-        && tar zxvf tensorflow_1.10.0.tar.gz \
-        && rm tensorflow_1.10.0.tar.gz
+RUN wget https://github.com/tensorflow/tensorflow/archive/v$TENSORFLOW_VERSION.tar.gz -O tensorflow.tar.gz \
+        && tar zxvf tensorflow.tar.gz \
+        && rm tensorflow.tar.gz \
+        && mv tensorflow-$TENSORFLOW_VERSION tensorflow
 
-ADD .tf_configure.bazelrc /work/tensorflow-1.10.0
+ADD .tf_configure.bazelrc /work/tensorflow
 
-RUN cat /work/tensorflow-1.10.0/.tf_configure.bazelrc
+RUN cat /work/tensorflow/.tf_configure.bazelrc
 
-RUN cd /work/tensorflow-1.10.0/ && bazel build -c opt //tensorflow:libtensorflow_cc.so
+RUN cd /work/tensorflow/ && bazel build -c opt //tensorflow:libtensorflow_cc.so
